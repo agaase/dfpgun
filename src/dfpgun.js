@@ -7,7 +7,6 @@
 (function() {
 
     var adslotmap = {};
-    var settings;
 
 
     var log = function(msg) {
@@ -43,9 +42,19 @@
             console.log("There is an ad blocker");
         }
     };
-
+    /**
+     * The  googletag.debug_log.log function is hacked to have the below
+     * function definition. Using this we can get the callback event when the ad was loaded.
+     * @method loadedCallback
+     * @param  {[type]}       level     [description]
+     * @param  {[type]}       message   [description]
+     * @param  {[type]}       service   [description]
+     * @param  {[type]}       slot      [description]
+     * @param  {[type]}       reference [description]
+     * @return {[type]}
+     */
     var loadedCallback = function(level, message, service, slot, reference) {
-        if (message.getMessageId() == "6") {
+        if (message.getMessageId().toString() === "6") {
             var adid = message.getMessageArgs();
             log("ad loaded-" + adid);
             var admap = adslotmap[adid];
@@ -70,31 +79,16 @@
         });
     };
 
-    var loadSettings = function() {
-        if (settings) {
-            return;
-        }
-        var networkId = networkId || 44363;
-        $.ajax({
-            url: "http://app.genwi.com/4.0/settings/getSettings/" + (networkId || 43780),
-            async: false,
-            dataType: 'json',
-            success: function(response) {
-                console.log(response);
-                settings = response;
-            }
-        });
-    };
-
     var triggerAd = function(element, args) {
         var adunit = args.adunit,
             sizes = args.sizes;
         googletag = args.googletag || googletag;
 
         adslotmap[adunit] = {};
+
         adslotmap[adunit]["callback"] = args.callback || undefined;
         adslotmap[adunit]["element"] = element;
-        adslotmap[adunit]["forceRefresh"] = typeof(args.forceRefresh) != "undefined" ? args.forceRefresh : true;
+        adslotmap[adunit]["forceRefresh"] = typeof(args.forceRefresh) !== "undefined" ? args.forceRefresh : true;
 
         log("dfploader:Triggering ad-" + adunit);
         var slot;
@@ -117,7 +111,6 @@
 
     $.fn.dfpgun = function(args) {
         loadDFP();
-        loadSettings();
         triggerAd($(this), args);
     };
 })($);

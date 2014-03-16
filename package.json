@@ -1,0 +1,28 @@
+{
+  "name": "dfpgun",
+  "version": "0.1.0",
+  "description": "jquery plugin to load google dfp ads.",
+  "main": "dfpgun.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+        "grunt": "0.4.2",
+        "grunt-contrib-clean": "0.5.0",
+        "grunt-contrib-concat": "0.3.0",
+        "grunt-contrib-jshint": "0.8.0",
+        "grunt-contrib-uglify": "0.3.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agaase/dfpgun.git"
+  },
+  "keywords": [
+    "dfp",
+    "jquery",
+    "google ads"
+  ],
+  "author": "agaase",
+  "license": "BSD",
+  "readmeFilename": "README.md"
+}

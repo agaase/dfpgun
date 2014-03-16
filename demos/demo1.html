@@ -1,0 +1,23 @@
+<html>
+<head>
+	<title>dfpgun | demo1</title>
+	<script>
+		window.onload = function(){
+			$(".samplead").dfpgun({
+				"adunit" : "/6355419/Travel/Europe/France/Paris",
+				"sizes" : [300,250],
+				"callback" : function(ad){
+					alert("loaded"+ad.attr("id"));
+				}
+			});
+		};
+	</script>
+</head>
+<body>
+
+<div class="samplead"></div>
+
+<script src="../src/libs/jquery-1.11.0.min.js"></script>
+<script src="../dist/dfpgun-0.1.0.min.js"></script>
+</body>
+</html>
