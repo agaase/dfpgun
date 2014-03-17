@@ -1,0 +1,33 @@
+<html>
+<head>
+	<title>dfpgun | demo2</title>
+	<style>
+		.dfpgun{
+			margin:10px 0;
+			width:320px;
+		}
+	</style>
+	<script>
+		var triggerAd = function(){
+			$(".adspace").empty();
+			$(".adspace").append("<div class='dfpgun' data-adunit='/6355419/Travel/Europe/France/Paris' data-adsize='300x250'></div>");
+			$.dfpgun({
+				"forceRefresh" : true
+			});
+		};
+		window.onload = function(){
+			$("#triggerButton").on("click",function(ev){
+				triggerAd();
+			})
+			triggerAd();
+		}
+	</script>
+</head>
+<body>
+<input type="button" value="Trigger Again" id="triggerButton"></input>
+<div class="adspace"></div>
+
+<script src="../src/libs/jquery-1.11.0.min.js"></script>
+<script src="../dist/dfpgun-0.1.0.min.js"></script>
+</body>
+</html>

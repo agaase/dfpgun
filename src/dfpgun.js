@@ -5,14 +5,26 @@
  * *******/
 
 (function() {
-
+    /**
+     * object containing mapping of dfp unit id versus actual ad information.
+     * @type {Object}
+     */
     var adslotmap = {};
 
+    var options = {};
+
+    var adClassSelector = ".dfpgun";
+    
+    var triggeredAdClass = "dfpgunned";
 
     var log = function(msg) {
         console.log("dfpgun:" + (new Date().getTime()) + ":" + msg);
     };
 
+    /**
+     * Loads the google dfp library used to trigger the dfpads.
+     * @method loadDFP
+     */
     var loadDFP = function() {
         var DFPLoaded;
         DFPLoaded = DFPLoaded || $('script[src*="gpt.js"]').length;
@@ -46,12 +58,6 @@
      * The  googletag.debug_log.log function is hacked to have the below
      * function definition. Using this we can get the callback event when the ad was loaded.
      * @method loadedCallback
-     * @param  {[type]}       level     [description]
-     * @param  {[type]}       message   [description]
-     * @param  {[type]}       service   [description]
-     * @param  {[type]}       slot      [description]
-     * @param  {[type]}       reference [description]
-     * @return {[type]}
      */
     var loadedCallback = function(level, message, service, slot, reference) {
         if (message.getMessageId().toString() === "6") {
@@ -65,36 +71,44 @@
                 callback(admap["element"]);
             }
             if (!admap["refreshed"] && !element.is(":visible") && admap["forceRefresh"]) {
-                refresh(adid);
+                refresh(admap);
                 admap["refreshed"] = true;
             }
         }
     };
-
-    var refresh = function(adunit) {
-        var admap = adslotmap[adunit];
+    /**
+     * Calls refresh on the adslot.
+     * @method refresh
+     * @param  {string} adunit [description]
+     */
+    var refresh = function(ad) {
         googletag.cmd.push(function() {
-            log("refreshed-" + adunit);
-            googletag.pubads().refresh([admap["slot"]]);
+            log("refreshing ad");
+            googletag.pubads().refresh([ad["slot"]]);
         });
     };
 
-    var triggerAd = function(element, args) {
-        var adunit = args.adunit,
-            sizes = args.sizes;
-        googletag = args.googletag || googletag;
-
+    var addInMap = function(adunit,element){
         adslotmap[adunit] = {};
-
-        adslotmap[adunit]["callback"] = args.callback || undefined;
+        adslotmap[adunit]["callback"] = options.callback || undefined;
         adslotmap[adunit]["element"] = element;
-        adslotmap[adunit]["forceRefresh"] = typeof(args.forceRefresh) !== "undefined" ? args.forceRefresh : true;
+        adslotmap[adunit]["forceRefresh"] = typeof(options.forceRefresh) !== "undefined" ? options.forceRefresh : false;
+    };
+
+    /**
+     * Triggers the dfp ad with the specified dom element as the container.
+     * @method triggerAd
+     * @param  {ad}  object prepared with all the ad info.
+     */
+    var triggerAd = function(ad) {
+        var adunit = ad.adunit,element = ad.element, slot, domid = "Ad_" + (parseInt(Math.random() * 100000,10)),
+            sizes = ad.sizes;
+        googletag = options.googletag || googletag;
+        
+        addInMap(adunit,element);
 
         log("dfploader:Triggering ad-" + adunit);
-        var slot;
-        var domid = "Ad_" + (parseInt(Math.random() * 100000));
-        element.empty().attr("id", domid);
-
+        element.empty().attr("id", domid).addClass(triggeredAdClass);
         googletag.cmd.push(function() {
             googletag.debug_log.log = loadedCallback;
             googletag.pubads().collapseEmptyDivs(true);
@@ -108,9 +122,35 @@
             googletag.display(domid);
         });
     };
-
-    $.fn.dfpgun = function(args) {
+    var triggerAds = function(){
+        var ads =[];
+        $(adClassSelector).each(function(i,v){
+            var id = $(v).attr("data-adunit");
+            var size = $(v).attr("data-adsize");
+            if(!id || !size){
+                log("invalid parameters for ad,skipping");
+            }else{
+                size = size.split("x");
+                if(size.length===2){
+                    size[0] = parseInt(size[0],10);
+                    size[1] = parseInt(size[1],10);
+                    ads.push({
+                        "adunit" : id,
+                        "sizes" : size,
+                        "element" : $(v)
+                    });
+                }else{
+                    log("invalid parameters for ad,skipping");
+                }
+            }
+        });
+        $.each(ads,function(i,v){
+            triggerAd(v);
+        });
+    };
+    $.dfpgun  = function(params) {
         loadDFP();
-        triggerAd($(this), args);
+        options = params || {};
+        triggerAds();
     };
 })($);

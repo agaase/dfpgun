@@ -1,13 +1,21 @@
 <html>
 <head>
 	<title>dfpgun | demo1</title>
+	<style>
+		.dfpgun{
+			opacity:0;
+			margin:10px;
+		}
+	</style>
 	<script>
 		window.onload = function(){
-			$(".samplead").dfpgun({
-				"adunit" : "/6355419/Travel/Europe/France/Paris",
-				"sizes" : [300,250],
+			$.dfpgun(
+				{
 				"callback" : function(ad){
-					alert("loaded"+ad.attr("id"));
+					console.log("loaded"+ad.attr("id"));
+					ad.animate({
+						"opacity":1
+					},1500).css("border","solid 1px");
 				}
 			});
 		};
@@ -15,7 +23,7 @@
 </head>
 <body>
 
-<div class="samplead"></div>
+<div class="dfpgun" data-adunit="/6355419/Travel/Europe/France/Paris" data-adsize="300x250" style="width:300px;"></div>
 
 <script src="../src/libs/jquery-1.11.0.min.js"></script>
 <script src="../dist/dfpgun-0.1.0.min.js"></script>
