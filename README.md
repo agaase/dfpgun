@@ -32,7 +32,8 @@ Example
 
 
 ####Demos
-1. [Demo1](http://agaase.github.io/webpages/imgr/demos/demo1.html)
+1. [Static page ad demo](http://agaase.github.io/webpages/dfpgundemo/demos/demo1.html)
+1. [dynamic page refresh ad demo](http://agaase.github.io/webpages/dfpgundemo/demos/demo2.html)
 
 
 ####Installing and Building
